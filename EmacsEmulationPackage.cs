@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -36,11 +37,11 @@ namespace Microsoft.VisualStudio.Editor.EmacsEmulation
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     // This attribute is needed to let the shell know that this package exposes some menus.
     //[ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid("d88ec9a6-cdda-4b04-8e46-ca81a3997a3a")]
+    [Guid(EmacsEmulationPackage.PackageGuidString)]
     [ProvideAutoLoad(UIContextGuids.SolutionExists)]
     public sealed class EmacsEmulationPackage : Package
     {
-        const string InstallFilename = "EmacsSetup.bat";
+        public const string PackageGuidString = "d88ec9a6-cdda-4b04-8e46-ca81a3997a3a";
 
         protected override void Initialize()
         {
@@ -48,7 +49,7 @@ namespace Microsoft.VisualStudio.Editor.EmacsEmulation
 
             var componentModel = this.GetService<SComponentModel, IComponentModel>();
             var manager = componentModel.GetService<EmacsCommandsManager>();
-
+            
             try
             {
                 // if the emacs keybindings are not installed and the user is not running elevated
@@ -56,7 +57,6 @@ namespace Microsoft.VisualStudio.Editor.EmacsEmulation
                 // get an ok from the user first
                 if (!manager.IsEmacsVskInstalled)
                 {
-
                     string installPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     installPath = Path.Combine(installPath, EmacsCommandsManager.EmacsVskFile);
 
